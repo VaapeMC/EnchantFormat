@@ -246,7 +246,10 @@ public class EnchantFormat extends JavaPlugin implements Listener{
 		        	}
 		        	else if (enchantmentName.contains("WATER_WORKER")) {
 		        		newLore.add(ChatColor.GRAY + "Aqua Affinity " + toRoman(item.getEnchantments().get(enchantmentRawName)));
-		        	}		            	
+		        	}		 
+		        	else if (enchantmentName.contains("SWEEPING_EDGE")) {
+		        		newLore.add(ChatColor.GRAY + "Sweeping Edge " + toRoman(item.getEnchantments().get(enchantmentRawName)));
+		        	}	
 		        }
 		        
 		        for (String line : lore) {
