@@ -115,7 +115,6 @@ public class EnchantFormat extends JavaPlugin implements Listener {
                         } else if (line.contains("Feather Falling")) {
                             iterator.remove();
                         } else if (line.contains("Fire Protection")) {
-
                             iterator.remove();
                         } else if (line.contains("Projectile Protection")) {
                             iterator.remove();
@@ -124,6 +123,8 @@ public class EnchantFormat extends JavaPlugin implements Listener {
                         } else if (line.contains("Thorns")) {
                             iterator.remove();
                         } else if (line.contains("Aqua Affinity")) {
+                            iterator.remove();
+                        } else if (line.contains("Sweeping Edge")) {
                             iterator.remove();
                         }
                     }
