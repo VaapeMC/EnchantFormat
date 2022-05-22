@@ -1,5 +1,5 @@
 name: EnchantFormat
 main: me.vaape.enchantformat.EnchantFormat
 version: 1.0
-api-version: 1.17
+api-version: 1.18
 commands:

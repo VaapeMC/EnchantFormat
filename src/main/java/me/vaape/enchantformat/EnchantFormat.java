@@ -1,10 +1,13 @@
 package me.vaape.enchantformat;
 
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -24,7 +27,7 @@ public class EnchantFormat extends JavaPlugin implements Listener {
 
     public void onEnable() {
         plugin = this;
-        getLogger().info(ChatColor.GREEN + "EnchantFormat has been enabled!");
+        getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "EnchantFormat has been enabled!");
         getServer().getPluginManager().registerEvents(this, this);
     }
 
@@ -33,8 +36,13 @@ public class EnchantFormat extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public void onClick(PlayerInteractEvent event) {
-        ItemStack item = event.getItem();
+    public void onInteract (PlayerInteractEvent event) {
+        ItemStack hand = event.getPlayer().getInventory().getItemInMainHand();
+        if (isUnique(hand)) return;
+        event.getPlayer().getInventory().setItemInMainHand(fixFormat(hand));
+    }
+
+    public ItemStack fixFormat(ItemStack item) {
         if (item != null && item.getType() != Material.AIR) {
             if (item.hasItemMeta()) {
                 ItemMeta itemMeta = item.getItemMeta();
@@ -44,24 +52,17 @@ public class EnchantFormat extends JavaPlugin implements Listener {
                     itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
                 }
 
-                List<String> lore = null;
+                List<String> lore = new ArrayList<String>();
                 if (itemMeta.getLore() != null) {
                     lore = itemMeta.getLore();
-                } else {
-                    lore = new ArrayList<String>();
-                }
-
-                if (lore.contains("Opens Legendary Chest") || lore.contains(ChatColor.DARK_AQUA + "A feather taken " +
-                                                                                    "from Ra")) {
-                    return;
                 }
 
                 List<String> newLore = new ArrayList<String>();
 
                 for (Enchantment enchantmentRawName : item.getEnchantments().keySet()) {
 
-                    String enchantmentName = enchantmentRawName.toString().split(",")[1].replace(" ", "").replace("]"
-                            , ""); //Extract official enchant name eg ARROW_DAMAGE
+                    String enchantmentName =
+                            enchantmentRawName.toString().split(",")[1].replace(" ", "").replace("]", ""); //Extract official enchant name eg ARROW_DAMAGE
 
                     //Removes current custom enchantment lore
                     Iterator<String> iterator = lore.iterator();
@@ -126,6 +127,16 @@ public class EnchantFormat extends JavaPlugin implements Listener {
                             iterator.remove();
                         } else if (line.contains("Sweeping Edge")) {
                             iterator.remove();
+                        } else if (line.contains("Riptide")) {
+                            iterator.remove();
+                        } else if (line.contains("Impaling")) {
+                            iterator.remove();
+                        } else if (line.contains("Loyalty")) {
+                            iterator.remove();
+                        } else if (line.contains("Quick Charge")) {
+                            iterator.remove();
+                        } else if (line.contains("Multishot")) {
+                            iterator.remove();
                         }
                     }
 
@@ -186,6 +197,16 @@ public class EnchantFormat extends JavaPlugin implements Listener {
                         newLore.add(ChatColor.GRAY + "Aqua Affinity " + toRoman(item.getEnchantments().get(enchantmentRawName)));
                     } else if (enchantmentName.contains("SWEEPING_EDGE")) {
                         newLore.add(ChatColor.GRAY + "Sweeping Edge " + toRoman(item.getEnchantments().get(enchantmentRawName)));
+                    } else if (enchantmentName.contains("RIPTIDE")) {
+                        newLore.add(ChatColor.GRAY + "Riptide " + toRoman(item.getEnchantments().get(enchantmentRawName)));
+                    } else if (enchantmentName.contains("IMPALING")) {
+                        newLore.add(ChatColor.GRAY + "Impaling " + toRoman(item.getEnchantments().get(enchantmentRawName)));
+                    } else if (enchantmentName.contains("LOYALTY")) {
+                        newLore.add(ChatColor.GRAY + "Loyalty " + toRoman(item.getEnchantments().get(enchantmentRawName)));
+                    } else if (enchantmentName.contains("QUICK_CHARGE")) {
+                        newLore.add(ChatColor.GRAY + "Quick Charge " + toRoman(item.getEnchantments().get(enchantmentRawName)));
+                    } else if (enchantmentName.contains("MULTISHOT")) {
+                        newLore.add(ChatColor.GRAY + "Multishot " + toRoman(item.getEnchantments().get(enchantmentRawName)));
                     }
                 }
 
@@ -195,8 +216,11 @@ public class EnchantFormat extends JavaPlugin implements Listener {
 
                 itemMeta.setLore(newLore);
                 item.setItemMeta(itemMeta);
+                return item;
             }
+            return item;
         }
+        return null;
     }
 
     static {
@@ -223,4 +247,24 @@ public class EnchantFormat extends JavaPlugin implements Listener {
         return map.get(l) + toRoman(number - l);
     }
 
+    public static boolean isUnique(ItemStack stack) {
+        if (stack != null && stack.getType() != Material.AIR) {
+            if (stack.hasItemMeta()) {
+                if (stack.getItemMeta().hasLore()) {
+                    List<String> lore = stack.getItemMeta().getLore();
+                    if (lore.contains(ChatColor.ITALIC + "Curses the souls of enemies")) { //Runeblade
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
 }

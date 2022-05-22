@@ -7,8 +7,12 @@ version '1.0.0'
 
 repositories {
     mavenCentral()
+    mavenLocal()
     maven {
-        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+        url = uri('https://papermc.io/repo/repository/maven-public/')
+    }
+    maven {
+        url = "https://maven.enginehub.org/repo/"
     }
     maven {
         url = "https://oss.sonatype.org/content/repositories/snapshots/"
@@ -16,5 +20,9 @@ repositories {
 }
 
 dependencies {
-    compileOnly('org.spigotmc:spigot-api:1.18.1-R0.1-SNAPSHOT')
+    compileOnly('io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT')
+}
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
